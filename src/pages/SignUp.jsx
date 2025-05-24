@@ -1,11 +1,13 @@
 import React, {useState} from 'react'
 import {Link} from "react-router-dom";
+import {UserAuth} from "../context/AuthContext.jsx";
 
 function SignUp() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
 
+    const {session, signUpNewUser} = UserAuth()
     const handleSubmit =()=>{
         console.log(password);
     }
