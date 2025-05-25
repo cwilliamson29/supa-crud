@@ -12,7 +12,7 @@ export const AuthContextProvider = ({ children }) => {
             const {data, error} = await supabase.auth.signInWithPassword({email, password})
             if(error){
                 console.error(error)
-                return {success: false, error: error}
+                return {success: false, error: error.message}
             }
             return {success: true, data}
         }catch(err){

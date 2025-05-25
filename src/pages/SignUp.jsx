@@ -1,19 +1,33 @@
 import React, {useState} from 'react'
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {UserAuth} from "../context/AuthContext.jsx";
 
 function SignUp() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
-
+    const navigate = useNavigate();
     const {session, signUpNewUser} = UserAuth()
-    const handleSubmit =()=>{
-        console.log(password);
+
+    const handleSubmit = async (e)=>{
+        e.preventDefault();
+
+        setLoading(true);
+
+        try{
+            const result = await signUpNewUser(email, password);
+            if(result.success){
+                navigate("/dashboard");
+            }
+        }catch(err){
+            console.log(err)
+        } finally {
+            setLoading(false);
+        }
     }
     return (
         <div>
-            <form className="max-w-md m-auto pt-4" onSubmit={handleSubmit}>
+            <form className="max-w-md m-auto pt-4" onSubmit={(e)=>handleSubmit(e)}>
                 <h2>Sign up</h2>
                 <p>Already have an account? <Link to="/signin">Sign in</Link></p>
                 <div className="flex flex-col p-4">
