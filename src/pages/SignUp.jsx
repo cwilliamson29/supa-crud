@@ -7,7 +7,7 @@ function SignUp() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const {session, signUpNewUser} = useAuth()
+    const {signUpNewUser} = useAuth()
 
     const handleSubmit = async (e)=>{
         e.preventDefault();
