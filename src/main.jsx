@@ -9,7 +9,6 @@ import {AuthContextProvider} from "./context/AuthContext.jsx";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-      <Navbar />
       <AuthContextProvider>
           <RouterProvider router={router} />
       </AuthContextProvider>

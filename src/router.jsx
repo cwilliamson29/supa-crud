@@ -7,12 +7,14 @@ import NotFound from "./pages/NotFound.jsx";
 import ProtectedRoutes from "./components/ProtectedRoutes.jsx";
 
 export const router = createBrowserRouter([
-    {path: '/', element: <App />},
-    {path: '/signup', element: <SignUp/>},
-    {path: '/signin', element: <SignIn/>},
-    {path: "/dashboard", element: <ProtectedRoutes />, children: [
-            {path: '/dashboard', element: <Dashboard/>},
-        ],
-    },
+    {path: '/', element: <App />, children: [
+            {path: '/signup', element: <SignUp/>},
+            {path: '/signin', element: <SignIn/>},
+            {path: "/dashboard", element: <ProtectedRoutes />, children: [
+                    {path: '/dashboard', element: <Dashboard/>},
+                ],
+            },
+        ]},
+
     {path: '*', element: <NotFound/>},
 ])
