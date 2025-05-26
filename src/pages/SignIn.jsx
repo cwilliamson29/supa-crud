@@ -1,30 +1,23 @@
 import React, {useState} from 'react'
 import {Link, useNavigate} from "react-router-dom";
-import {UserAuth} from "../context/AuthContext.jsx";
+import {useAuth} from "../context/AuthContext.jsx";
+import {supabase} from "../db/supabase.js";
 
 function SignIn() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const {session, signinUser} = UserAuth()
+    const {session, signinUser} = useAuth()
 
     const handleSubmit = async (e)=>{
         e.preventDefault();
-
-        setLoading(true);
-
-        try{
-            const result = await signinUser(email, password);
-            if(result.success){
-                navigate("/dashboard");
-            }
-        }catch(err){
-            console.log(err)
-        } finally {
-            setLoading(false);
-            console.log(session);
-        }
+        const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
+        if (error) alert(error.message);
+        else navigate("/dashboard");
     }
     return (
         <div>

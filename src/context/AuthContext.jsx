@@ -5,20 +5,8 @@ const AuthContext = createContext()
 
 export const AuthContextProvider = ({ children }) => {
     const [session, setSession] = useState(null)
+    const [loading, setLoading] = useState(true)
 
-    // SIGN IN
-    const signinUser = async (email, password) => {
-        try{
-            const {data, error} = await supabase.auth.signInWithPassword({email, password})
-            if(error){
-                console.error(error)
-                return {success: false, error: error.message}
-            }
-            return {success: true, data}
-        }catch(err){
-            console.error(err)
-        }
-    }
     // SIGN UP
     const signUpNewUser = async (email, password) => {
         const {data, error} = await supabase.auth.signUp({
@@ -40,23 +28,42 @@ export const AuthContextProvider = ({ children }) => {
     }
     // SESSION CHANGE
     useEffect(() => {
-        supabase.auth.getSession().then(({data: {session}}) => {
-            setSession(session);
+        let mounted = true;
+
+        const initSession = async () => {
+            const { data } = await supabase.auth.getSession();
+            if (mounted) {
+                setSession(data?.session ?? null);
+            }
+        };
+
+        const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
+            if (mounted) {
+                setSession(newSession);
+                setLoading(false);
+            }
         });
 
-        supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session);
-        })
-    }, [])
+        initSession().then(() => {
+            setTimeout(() => {
+                if (mounted) setLoading(false);
+            }, 300);
+        });
+
+        return () => {
+            mounted = false;
+            listener.subscription.unsubscribe();
+        };
+    }, []);
+
+
 
 
     return (
-        <AuthContext.Provider value={{session,signUpNewUser, signOutUser, signinUser}}>
+        <AuthContext.Provider value={{session, loading, signUpNewUser, signOutUser}}>
             {children}
         </AuthContext.Provider>
     )
 }
 
-export const UserAuth = () => {
-    return useContext(AuthContext)
-}
+export const useAuth = () => useContext(AuthContext);
