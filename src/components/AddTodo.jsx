@@ -30,7 +30,7 @@ function AddTodo() {
         <div className="flex flex-col items-center justify-center w-full">
             <h1 className="text-3xl font-bold">Add todo's</h1>
             <form onSubmit={handleSubmit}>
-                <input type="text" placeholder="Add your note here..." className="border-1 m-3" autoFocus={true} onChange={(e)=>setTodo(e.target.value)}/>
+                <input type="text" placeholder="Add your note here..." className="border-1 m-3" autoFocus={true} value={todo} onChange={(e)=>setTodo(e.target.value)}/>
                 <button type="submit" disabled={loading}>
                     {loading ? "Adding..." : "Add Todo"}
                 </button>

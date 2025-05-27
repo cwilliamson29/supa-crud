@@ -13,9 +13,9 @@ function ListTodos() {
             const { data, error } = await supabase
                 .from("todos")
                 .select("id, todo_text")
-                .eq("user_id", session.user.id);
+                .eq("user_id", session.user.id)
+                .order("id", {ascending: true});
             if (!error) setTodos(data);
-            //console.log(data)
         };
 
         fetchTodos();
@@ -60,6 +60,7 @@ function ListTodos() {
             );
             console.log(error)
         }
+        setTodos(todos.map(item => (item.id === id ? {...item, todo_text: newText} : item)))
     };
     return (
         <div className="flex flex-col items-center justify-center w-full">
