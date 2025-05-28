@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {supabase} from "../db/supabase";
 import {useAuth} from "../context/AuthContext";
+import {sortTodosHelper} from "../helpers/useTodosHelper.js";
 
 export function useTodos() {
     const {session} = useAuth();
@@ -39,9 +40,9 @@ export function useTodos() {
             .select();
 
         if (!error && data) {
-            setTodos((prev) =>
-                [...prev, ...data].sort((a, b) => a.id - b.id || a.isCompleted - b.isCompleted)
-            );
+            let newTodos = sortTodosHelper([...todos, ...data])
+            setTodos(newTodos);
+            console.log(newTodos)
         } else {
             console.log(error)
         }
@@ -60,18 +61,7 @@ export function useTodos() {
     const editTodo = async (newTodo) => {
         const {error} = await supabase.from("todos").update({todo_text: newTodo.todo_text, isCompleted: newTodo.isCompleted}).eq("id", newTodo.id);
         if (!error) {
-            // setTodos((prev) =>
-            //     prev.map((todo) => (todo.id === newTodo.id ? {...todo, todo_text: newTodo.todo_text} : todo))
-            // );
-            let newTodos = todos.map(item => (item.id === newTodo.id ? {...item, todo_text: newTodo.todo_text, isCompleted: newTodo.isCompleted} : item))
-            //let newTodo = todos.map(item => (item.id === newTodo.id ? {...item, todo_text: newTodo.todo_text, isCompleted: newTodo.isCompleted} : item))
-            //newTodo.sort((a, b) => a.id - b.id || a.isCompleted - b.isCompleted)
-            newTodos.sort((a, b) => {
-                if (a.id === b.id) {
-                    return Number(b.isCompleted) - Number(a.isCompleted)
-                }
-                return a.id - b.id
-            })
+            let newTodos = sortTodosHelper(todos.map(item => (item.id === newTodo.id ? {...item, todo_text: newTodo.todo_text, isCompleted: newTodo.isCompleted} : item)))
             setTodos(newTodos)
         } else {
             console.log(error)

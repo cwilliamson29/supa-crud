@@ -1,21 +1,16 @@
 import React, {useState} from 'react'
-import {supabase} from "../db/supabase.js";
-import {useAuth} from "../context/AuthContext.jsx";
 
-function AddTodo() {
-    const {session} = useAuth();
+function AddTodo({addTodo}) {
     const [todo, setTodo] = useState("");
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setMessage("");
 
-        const user_id = session?.user?.id;
-        const { error } = await supabase.from("todos").insert({ todo_text: todo, user_id });
+        const {error} = addTodo(todo)
 
         if (error) {
             setMessage("Failed to add todo: " + error);
@@ -24,14 +19,15 @@ function AddTodo() {
             setMessage("Todo added successfully!");
             setTodo("");
         }
+
         setLoading(false);
     }
     return (
         <div className="flex flex-col items-center justify-center w-full">
             <h1 className="text-3xl font-bold">Add todo's</h1>
-            <form onSubmit={handleSubmit}>
-                <input type="text" placeholder="Add your note here..." className="border-1 m-3" autoFocus={true} value={todo} onChange={(e)=>setTodo(e.target.value)}/>
-                <button type="submit" disabled={loading}>
+            <form onSubmit={handleSubmit} className="w-full flex justify-center items-center w-full">
+                <input type="text" placeholder="Add your note here..." className="border-1 m-3 p-2 w-1/4" autoFocus={true} value={todo} onChange={(e) => setTodo(e.target.value)}/>
+                <button type="submit" className="bg-blue-800 p-2 px-4 rounded-md border-1 border-blue-700 hover:border-blue-600 cursor-pointer" disabled={loading}>
                     {loading ? "Adding..." : "Add Todo"}
                 </button>
                 {message && <p>{message}</p>}

@@ -1,16 +1,14 @@
-import React, {useState} from 'react'
-import {useAuth} from "../context/AuthContext.jsx";
-import {useNavigate} from "react-router-dom";
-import {supabase} from "../db/supabase.js";
+import React from 'react'
 import AddTodo from "../components/AddTodo.jsx";
 import ListTodos from "../components/ListTodos.jsx";
+import {useTodos} from "../hooks/useTodos.js";
 
 function Dashboard() {
-
+    const {todos, loading, deleteTodo, editTodo, addTodo} = useTodos();
     return (
         <div>
-            <AddTodo />
-            <ListTodos />
+            <AddTodo addTodo={addTodo}/>
+            <ListTodos todos={todos} loading={loading} deleteTodo={deleteTodo} editTodo={editTodo}/>
         </div>
     )
 }
